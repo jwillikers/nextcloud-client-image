@@ -24,7 +24,7 @@ if set -q _flag_manifest
     echo "The image will be added to the $manifest manifest."
 end
 
-set -l name forticlient
+set -l name nextcloud-client
 if set -q _flag_name
     set name $_flag_name
 end
@@ -53,7 +53,7 @@ or exit
 buildah config --workingdir /home/nextcloud-client $container
 or exit
 
-buildah config --cmd '["nextcloudcmd", "-n", "--non-interactive"]' $container
+buildah config --cmd '["nextcloudcmd", "--non-interactive"]' $container
 or exit
 
 buildah config --label io.containers.autoupdate=registry $container

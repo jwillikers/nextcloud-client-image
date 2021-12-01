@@ -44,28 +44,28 @@ Labels::
 
 == Quick Start
 
-. Create a `.netrc` file containing your Nextcloud login credentials.
-+
-.nextcloud-client-netrc
-[source]
-----
-machine cloud.example.com
-login <Nextcloud User>
-password <Nextcloud Access Token>
-----
+// . Create a `.netrc` file containing your Nextcloud login credentials.
+// +
+// .nextcloud-client-netrc
+// [source]
+// ----
+// machine cloud.example.com
+// login <Nextcloud User>
+// password <Nextcloud App Password>
+// ----
 
 . Save the Nextcloud login details as a Podman secret.
 +
 [source,sh]
 ----
-podman secret create nextcloud-client-netrc ./nextcloud-client-netrc
+printf <Nextcloud App Password> | podman secret create nextcloud_client_app_password -
 ----
 
-. Delete the plaintext `.netrc` file containing your login credentials.
+. Create the directory your syncing if it doesn't already exist.
 +
 [source,sh]
 ----
-rm ./nextcloud-client-netrc
+mkdir -p ~/Nextcloud
 ----
 
 . To run `nextcloudcmd` from this image, run the container using Podman and pass the command to the script.
@@ -76,12 +76,17 @@ rm ./nextcloud-client-netrc
 podman run \
   --detach \
   --name nextcloud-client \
-  --secret nextcloud-client-netrc,type=mount,target=/home/nextcloud-client/.netrc
+  --rm \
+  --secret nextcloud_client_app_password,type=env \
   --userns keep-id \
-  --volume $HOME/Nextcloud:~/Nextcloud:z \
+  --volume $HOME/Nextcloud:/home/nextcloud-client/Nextcloud:z \
   quay.io/jwillikers/nextcloud-client:latest \
-    ~/Nextcloud \
-    https://cloud.example.com
+  /bin/bash -c 'nextcloudcmd \
+    --non-interactive \
+    --user jordan \
+    --password $nextcloud_client_app_password \
+    /home/nextcloud-client/Nextcloud \
+    https://cloud.example.com'
 ----
 
 NOTE: Add the `-h` flag to sync hidden files and directories.
