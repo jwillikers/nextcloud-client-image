@@ -42,6 +42,8 @@ Supported architectures::
 Labels::
 `io.containers.autoupdate=registry`::: Enables automatic updates when using {Podman} and the _fully-qualified_ image name.
 
+NOTE: The client currently contains all the code for the GUI, but I should be able to build just the command-line client by building from source.
+
 == Quick Start
 
 // . Create a `.netrc` file containing your Nextcloud login credentials.
@@ -91,6 +93,79 @@ podman run \
 
 NOTE: Add the `-h` flag to sync hidden files and directories.
 --
+
+== Systemd Service
+
+It's possible to configure the Nextcloud Client to run as a Systemd service, which is great for scheduled backups.
+
+. Start the container with `podman run` as above.
+
+. Create the Systemd directory for your user's own Systemd units.
++
+[source,sh]
+----
+mkdir -p ~/.config/systemd/user
+----
+
+. Change into this directory.
++
+[source,sh]
+----
+cd ~/.config/systemd/user
+----
+
+. Generate a Systemd service unit for the Nextcloud Client container.
++
+[source,sh]
+----
+podman generate systemd --files --new --name nextcloud-client
+----
+
+. Stop up the container.
++
+[source,sh]
+----
+podman stop nextcloud-client
+----
+
+. Create a Systemd Timer unit to run the client.
++
+.~/.config/systemd/user/container-nextcloud-client.timer
+[source,Systemd]
+----
+[Unit]
+Description=Sync Nextcloud directory every hour
+
+[Timer]
+# Run 5 minutes after logging in to avoid network issues
+OnStartupSec=5min
+# Run every 1 hour thereafter
+OnCalendar=hourly
+
+[Install]
+WantedBy=timers.target
+----
+
+. Now enable the Nextcloud Client System service unit.
++
+[source,sh]
+----
+systemctl --user enable --now container-nextcloud-client.timer
+----
+
+. Allow running the user's Systemd services when the user is not logged in.
++
+[source,sh]
+----
+loginctl enable-linger $USER
+----
+
+. If you want to get automatic updates, make sure to enable Podman's automatic update timer for the user.
++
+[source,sh]
+----
+systemctl --user enable --now podman-auto-update.timer
+----
 
 == Build
 
