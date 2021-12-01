@@ -40,10 +40,20 @@ podman run --rm --arch $architecture --volume $mountpoint:/mnt:Z registry.fedora
     bash -c "dnf clean all -y --installroot /mnt --releasever 35"
 or exit
 
+podman run --rm --arch $architecture --volume $mountpoint:/mnt:Z registry.fedoraproject.org/fedora:latest \
+    bash -c "useradd --root /mnt nextcloud-client"
+or exit
+
 buildah unmount $container
 or exit
 
-buildah config --cmd '["bash"]' $container
+buildah config --user nextcloud-client $container
+or exit
+
+buildah config --workingdir /home/nextcloud-client $container
+or exit
+
+buildah config --cmd '["nextcloudcmd", "-n", "--non-interactive"]' $container
 or exit
 
 buildah config --label io.containers.autoupdate=registry $container

@@ -13,6 +13,7 @@
         "jwillikers",
         "mkdir",
         "mountpoint",
+        "netrc",
         "Nextcloud",
         "nextcloud-client",
         "nextcloudcmd",
