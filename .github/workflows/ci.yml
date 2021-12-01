@@ -17,7 +17,7 @@ jobs:
       matrix:
         arch:
           - amd64
-          # - arm64
+          - arm64
     steps:
       - name: Install the fish shell
         uses: fish-actions/install-fish@v1.1.0
@@ -84,15 +84,15 @@ jobs:
         run: buildah manifest create nextcloud-client:latest
 
       # aarch64
-      # - uses: actions/download-artifact@v2
-      #   with:
-      #     name: nextcloud-client-arm64
+      - uses: actions/download-artifact@v2
+        with:
+          name: nextcloud-client-arm64
 
-      # - name: Load the aarch64 image
-      #   run: podman image load -i nextcloud-client-arm64.tar
+      - name: Load the aarch64 image
+        run: podman image load -i nextcloud-client-arm64.tar
 
-      # - name: Add the aarch64 image to the manifest
-      #   run: buildah manifest add nextcloud-client:latest localhost/nextcloud-client-arm64
+      - name: Add the aarch64 image to the manifest
+        run: buildah manifest add nextcloud-client:latest localhost/nextcloud-client-arm64
 
       # x86_64
       - uses: actions/download-artifact@v2
