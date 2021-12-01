@@ -1,0 +1,143 @@
+= Nextcloud Client Container
+Jordan Williams <jordan@jwillikers.com>
+:experimental:
+:icons: font
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+:Asciidoctor_: https://asciidoctor.org/[Asciidoctor]
+:Buildah: https://buildah.io/[Buildah]
+:Fedora: https://getfedora.org/[Fedora]
+:Fedora-Silverblue: https://silverblue.fedoraproject.org/[Fedora Silverblue]
+:fish: https://fishshell.com/[fish]
+:Git: https://git-scm.com/[Git]
+:Linux: https://www.linuxfoundation.org/[Linux]
+:Nextcloud-Client: https://github.com/nextcloud/desktop[Nextcloud-Client]
+:Podman: https://podman.io/[Podman]
+:pre-commit: https://pre-commit.com/[pre-commit]
+:Python: https://www.python.org/[Python]
+:Rouge: https://rouge.jneen.net/[Rouge]
+:Ruby: https://www.ruby-lang.org/en/[Ruby]
+
+image:https://img.shields.io/github/workflow/status/jwillikers/nextcloud-client-image/CI/main[GitHub Workflow Status]
+image:https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white[pre-commit, link=https://github.com/pre-commit/pre-commit]
+
+A container image for the running the {Nextcloud-Client} CLI tool.
+
+== Synopsis
+
+Image:: https://quay.io/repository/jwillikers/nextcloud-client[quay.io/jwillikers/nextcloud-client]
+
+Tags::
+* `latest`
+
+Supported architectures::
+* `amd64` _(x86_64)_
+* `arm64` _(aarch64)_
+
+Labels::
+`io.containers.autoupdate=registry`::: Enables automatic updates when using {Podman} and the _fully-qualified_ image name.
+
+== Quick Start
+
+To run `nextcloudcmd` from this image, run the container using Podman and pass the command to the script.
+
+  // --userns keep-id \
+
+[source,sh]
+----
+podman run \
+  --detach \
+  --name nextcloud-client \
+  --user (id -u):(id -g) \
+  --volume $HOME/Nextcloud:~/Nextcloud:z \
+  quay.io/jwillikers/nextcloud-client:latest \
+  nextcloudcmd
+    --non-interactive \
+    --username=<username> \
+    --password=<password> \
+    ~/Nextcloud \
+    https://cloud.example.com
+----
+
+== Build
+
+Use Buildah to build the image.
+The script is written for the fish shell.
+
+. Install the necessary dependencies.
++
+[source,sh]
+----
+sudo dnf -y install fish git buildah podman pre-commit
+----
+
+. Clone this repository.
++
+[source,sh]
+----
+git -C ~/Projects clone git@github.com:jwillikers/nextcloud-client-image.git
+----
+
+. Change into the project directory.
++
+[source,sh]
+----
+cd ~/Projects/nextcloud-client-image
+----
+
+. Install pre-commit's Git hooks.
++
+[source,sh]
+----
+pre-commit install
+----
+
+. Run the shell script.
++
+[source,sh]
+----
+buildah unshare fish ~/Projects/nextcloud-client-image/build.fish
+----
+
+== Contributing
+
+Contributions in the form of issues, feedback, and even pull requests are welcome.
+Make sure to adhere to the project's link:CODE_OF_CONDUCT.adoc[Code of Conduct].
+
+== Open Source Software
+
+This project is built on the hard work of countless open source contributors.
+Several of these projects are enumerated below.
+
+* {Asciidoctor_}
+* {Buildah}
+* {Fedora}
+* {Fedora-Silverblue}
+* {fish}
+* {Git}
+* {Linux}
+* {nextcloud-client}
+* {Podman}
+* {pre-commit}
+* {Python}
+* {Rouge}
+* {Ruby}
+
+== Code of Conduct
+
+Refer to the project's link:CODE_OF_CONDUCT.adoc[Code of Conduct] for details.
+
+== License
+
+This repository is licensed under the https://www.gnu.org/licenses/gpl-3.0.html[GPLv3], a copy of which is provided in the link:LICENSE.adoc[license file].
+
+© 2021 Jordan Williams
+
+== Authors
+
+mailto:{email}[{author}]

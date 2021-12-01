@@ -1,0 +1,26 @@
+{
+    "cSpell.words": [
+        "aarch",
+        "adoc",
+        "argparse",
+        "Asciidoctor",
+        "autoupdate",
+        "Buildah",
+        "creds",
+        "fedoraproject",
+        "ifdef",
+        "installroot",
+        "jwillikers",
+        "mkdir",
+        "mountpoint",
+        "Nextcloud",
+        "nextcloud-client",
+        "nextcloudcmd",
+        "overlayfs",
+        "Podman",
+        "printf",
+        "releasever",
+        "Silverblue",
+        "userns"
+    ]
+}
