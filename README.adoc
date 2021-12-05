@@ -169,8 +169,17 @@ systemctl --user enable --now podman-auto-update.timer
 
 == Build
 
-Use Buildah to build the image.
+Build the container images with Buildah using the `build.fish` shell script.
 The script is written for the fish shell.
+
+. Configure the system driver to use Btrfs or overlayfs.
+This allows the shell script to make use of containers to build the containers.
++
+.~/.config/containers/storage.conf
+[source,sh]
+----
+driver = "btrfs"
+----
 
 . Install the necessary dependencies.
 +
