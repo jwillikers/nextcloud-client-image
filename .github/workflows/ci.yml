@@ -34,9 +34,6 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v2
 
-      - name: Make the DNF cache directory
-        run: mkdir -p /var/cache/dnf
-
       - name: Build the image with Buildah
         run: buildah unshare ./build.fish --architecture ${{ matrix.arch }} --name nextcloud-client-${{ matrix.arch }}
 

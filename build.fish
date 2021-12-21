@@ -11,12 +11,12 @@ argparse --max-args 0 $options -- $argv
 or exit
 
 set -l default_architecture (buildah info --format={{".host.arch"}})
-set -l default_cachedir /var/cache/dnf
+set -l example_cachedir /var/cache/dnf
 set -l default_name nextcloud-client
-set -l default_nextcloud_version v3.4.0
+set -l default_nextcloud_version 3.4.1
 
 if set -q _flag_help
-    echo "build.fish [-a|--architecture $default_architecture] [-c|--cachedir $default_cachedir] [-h|--help] [-m|--manifest manifest-name] [-n|--name $default_name] [-v|--version $default_nextcloud_version]"
+    echo "build.fish [-a|--architecture $default_architecture] [-c|--cachedir $example_cachedir] [-h|--help] [-m|--manifest manifest-name] [-n|--name $default_name] [-v|--version $default_nextcloud_version]"
     exit 0
 end
 
@@ -26,9 +26,9 @@ if set -q _flag_architecture
 end
 echo "The image will be built for the $architecture architecture."
 
-set -l cachedir $default_cachedir
+set -l cachedir_option
 if set -q _flag_cachedir
-    set -l cachedir $_flag_cachedir
+    set -l cachedir_option --volume $_flag_cachedir:/var/cache/dnf:O
     echo "Caching DNF packages in $cachedir."
 end
 
@@ -56,7 +56,7 @@ end
 set -l build_container (buildah from --arch $architecture scratch)
 set -l build_container_mountpoint (buildah mount $build_container)
 
-podman run --rm --arch $architecture --volume $build_container_mountpoint:/mnt:z --volume $cachedir:/var/cache/dnf:O registry.fedoraproject.org/fedora:latest \
+podman run --rm --arch $architecture --volume $build_container_mountpoint:/mnt:z $cachedir_option registry.fedoraproject.org/fedora:latest \
     sh -c "dnf -y install --installroot /mnt --releasever $fedora_version --nodocs \
         bash cmake gcc gcc-c++ git gold ninja-build \
         openssl-devel libzip-devel qt5-qtbase-devel qt5-qtbase-private-devel qt5-qtdeclarative-devel \
@@ -98,7 +98,7 @@ or exit
 buildah config --workingdir /home/nextcloud-client-builder/desktop $build_container
 or exit
 
-buildah run $build_container -- sh -c "git checkout $nextcloud_version"
+buildah run $build_container -- sh -c "git checkout v$nextcloud_version"
 or exit
 
 buildah run $build_container -- sh -c 'cmake -GNinja \
@@ -129,9 +129,9 @@ or exit
 set -l container (buildah from --arch $architecture scratch)
 set -l container_mountpoint (buildah mount $container)
 
-podman run --rm --arch $architecture --volume $container_mountpoint:/mnt:z --volume $cachedir:/var/cache/dnf:O registry.fedoraproject.org/fedora:latest \
+podman run --rm --arch $architecture --volume $container_mountpoint:/mnt:z $cachedir_option registry.fedoraproject.org/fedora:latest \
     sh -c "dnf -y install --installroot /mnt --releasever $fedora_version --nodocs --setopt install_weak_deps=False \
-    glibc-minimal-langpack ca-certificates \
+    glibc-minimal-langpack \
     qt5-qtbase qt5-qtsvg qt5-qtwebsockets qtkeychain-qt5 sqlite; \
     dnf clean all -y --installroot /mnt --releasever $fedora_version"
 or exit
@@ -171,3 +171,5 @@ else
     buildah commit --rm --squash $container $name
     or exit
 end
+
+buildah tag $name $version
