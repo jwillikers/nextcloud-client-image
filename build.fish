@@ -33,11 +33,11 @@ set -l container (buildah from --arch $architecture scratch)
 set -l mountpoint (buildah mount $container)
 
 podman run --rm --arch $architecture --volume $mountpoint:/mnt:Z registry.fedoraproject.org/fedora:latest \
-    bash -c "dnf -y install --installroot /mnt --releasever 36 glibc-minimal-langpack bash coreutils nextcloud-client --nodocs --setopt install_weak_deps=False"
+    bash -c "dnf -y install --installroot /mnt --releasever 35 glibc-minimal-langpack bash coreutils nextcloud-client --nodocs --setopt install_weak_deps=False"
 or exit
 
 podman run --rm --arch $architecture --volume $mountpoint:/mnt:Z registry.fedoraproject.org/fedora:latest \
-    bash -c "dnf clean all -y --installroot /mnt --releasever 36"
+    bash -c "dnf clean all -y --installroot /mnt --releasever 35"
 or exit
 
 podman run --rm --arch $architecture --volume $mountpoint:/mnt:Z registry.fedoraproject.org/fedora:latest \
