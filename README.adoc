@@ -23,7 +23,7 @@ endif::[]
 :Rouge: https://rouge.jneen.net/[Rouge]
 :Ruby: https://www.ruby-lang.org/en/[Ruby]
 
-image:https://img.shields.io/github/workflow/status/jwillikers/nextcloud-client-image/CI/main[GitHub Workflow Status]
+image:https://github.com/jwillikers/nextcloud-client-image/workflows/CI/badge.svg["Build Status", link="https://github.com/jwillikers/nextcloud-client-image/actions?query=workflow%3ACI"]
 image:https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white[pre-commit, link=https://github.com/pre-commit/pre-commit]
 
 A container image for the running the {Nextcloud-Client} CLI tool.
