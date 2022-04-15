@@ -63,6 +63,13 @@ password <Nextcloud App Password>
 podman secret create nextcloud_client_netrc ./nextcloud-client-netrc
 ----
 
+. Delete the lingering `.netrc` file now that the file is stored in Podman.
++
+[source,sh]
+----
+rm nextcloud-client-netrc
+----
+
 . Create the directory your syncing if it doesn't already exist.
 +
 [source,sh]
@@ -79,12 +86,13 @@ podman run \
   --detach \
   --name nextcloud-client \
   --rm \
-  --secret nextcloud_client_app_password,target=/home/nextcloud-client/.netrc \
+  --secret nextcloud_client_netrc,target=/home/nextcloud-client/.netrc \
   --userns keep-id \
-  --volume $HOME/Nextcloud:/home/nextcloud-client/Nextcloud:z \
+  --volume ~/Nextcloud:/home/nextcloud-client/Nextcloud:z \
   quay.io/jwillikers/nextcloud-client:latest \
   /bin/bash -c 'nextcloudcmd \
     --non-interactive \
+    -n \
     -h \
     /home/nextcloud-client/Nextcloud \
     https://cloud.example.com'
@@ -156,7 +164,7 @@ systemctl --user enable --now container-nextcloud-client.timer
 +
 [source,sh]
 ----
-loginctl enable-linger $USER
+sudo loginctl enable-linger $USER
 ----
 
 . If you want to get automatic updates, make sure to enable Podman's automatic update timer for the user.
